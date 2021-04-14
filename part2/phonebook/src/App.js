@@ -22,7 +22,7 @@ const App = () => {
         setPersons(initialPersons))
       .catch(error => {
         displayMessage(`Could not initialize`, true)
-        console.log('error', error)
+        console.log('error', error.response.data)
       })
   }, [])
 
@@ -52,11 +52,12 @@ const App = () => {
   const createPerson = (personObject) => {
     servicePersons.create(personObject)
       .then(returnedPerson => {
+        console.log('ret', returnedPerson)
         setPersons(persons.concat(returnedPerson))
         displayMessage(`added ${returnedPerson.name}`, false)
       }).catch(error => {
-        displayMessage(`Information of ${personObject.name} has already been removed from server`, true)
-        console.log('error', error)
+        displayMessage(error.response.data.error, true)
+        console.log('error', error.response.data.error)
       })
   }
 
@@ -69,8 +70,8 @@ const App = () => {
       })
       .catch(error => {
         setPersons(persons.filter(person => person.id !== updatePerson.id))
-        displayMessage(`Information of ${personObject.name} has already been removed from server`, true)
-        console.log('error', error)
+        displayMessage(`Information of ${personObject.name} has not been not found`, true)
+        console.log('error', error.response.data)
       })
   }
 
@@ -78,12 +79,12 @@ const App = () => {
     if (window.confirm(`Delete ${personDel.name} ?`)) {
       servicePersons.remove(personDel.id)
         .then(returnedPerson => {
-          if (returnedPerson.length === 0) 
+          if (returnedPerson.length === 0)
             setPersons(persons.filter(person => person.id !== personDel.id));
           displayMessage(`removed ${personDel.name}`, false)
         }).catch(error => {
           displayMessage(`Information of ${personDel.name} has already been removed from server`, true)
-          console.log('error', error)
+          console.log('error', error.response.data)
         })
     }
   }
